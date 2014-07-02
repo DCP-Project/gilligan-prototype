@@ -34,7 +34,29 @@ DCPMessage *DCPMessage::fromBytes(char *bytes, quint16 byte_len)
     if((next - bytes) > len) return NULL;
     cmd = QString(next);
 
-    msg = new DCPMessage(src, dst, cmd, QMultiHash<QString, QString>());
+    next += cmd.length() + 1;
+
+    QMultiHash<QString, QString> params;
+    QString key, val;
+    bool is_key = true;
+
+    while((next - bytes) + 2 < len)
+    {
+        if(is_key)
+        {
+            key = QString(next);
+            next += key.length() + 1;
+            is_key = false;
+        } else {
+            val = QString(next);
+            next += val.length() + 1;
+            is_key = true;
+
+            params.insert(key, val);
+        }
+    }
+
+    msg = new DCPMessage(src, dst, cmd, params);
 
     return msg;
 }
