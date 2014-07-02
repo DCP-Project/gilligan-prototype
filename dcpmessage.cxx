@@ -85,7 +85,7 @@ quint16 DCPMessage::toBytes(char **bytes, quint16 max)
         *buffer++ = '\0';
     }
 
-    *buffer++ = '\0';
+    // pad
     *buffer++ = '\0';
 
     quint16 len = buffer - *bytes;
