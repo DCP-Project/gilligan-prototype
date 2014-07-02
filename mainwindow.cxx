@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
                          "chatting.");
     statusBar()->showMessage(welcome);
 
-    setWindowTitle(tr("Gilligan Client - Not Connected"));
+    setWindowTitle(tr("Not Connected - Gilligan"));
     setMinimumSize(480, 320);
     resize(480, 320);
 
@@ -40,7 +40,7 @@ void MainWindow::netConnect()
     ConnectDialog dialog;
     dialog.exec();
 
-    conn = new DCPConnection(this);
+    conn = new DCPConnection;
 
     connect(conn, SIGNAL(networkConnected()), this, SLOT(connected()));
     connect(conn, SIGNAL(messageReceived(DCPMessage*)), this, SLOT(received(DCPMessage*)));
@@ -53,6 +53,7 @@ void MainWindow::netConnect()
 void MainWindow::connected()
 {
     output->insertHtml("Now connected<br>\n");
+    setWindowTitle(tr("Connected - Gilligan"));
     connectAct->setEnabled(false);
     disconnectAct->setEnabled(true);
 }
@@ -70,6 +71,9 @@ void MainWindow::disconnect()
 {
     delete conn;
     conn = NULL;
+
+    setWindowTitle(tr("Not Connected - Gilligan"));
+    output->insertHtml("Disconnected.");
 
     disconnectAct->setEnabled(false);
     connectAct->setEnabled(true);
