@@ -19,13 +19,15 @@ DCPConnection::DCPConnection(QObject *parent) :
     connect(sock, SIGNAL(connected()), this, SLOT(connected()));
 }
 
-void DCPConnection::connectTo(QString server, QString handle, QString passphrase)
+void DCPConnection::connectTo(QString server, QString handle, QString passphrase, QString client)
 {
     sock->connectToHost(server, 7266);
 
     QMultiHash<QString, QString> signon;
     signon.insert("handle", handle);
     signon.insert("password", passphrase);
+    signon.insert("client-name", client);
+    signon.insert("client-ver", "Gilligan");
     signon.insert("options", "*");
     initialMsg = new DCPMessage("*", "*", "SIGNON", signon);
 }

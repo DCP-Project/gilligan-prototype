@@ -45,7 +45,7 @@ void MainWindow::netConnect()
     connect(conn, SIGNAL(networkConnected()), this, SLOT(connected()));
     connect(conn, SIGNAL(messageReceived(DCPMessage*)), this, SLOT(received(DCPMessage*)));
 
-    conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase());
+    conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(), dialog.client());
 }
 
 

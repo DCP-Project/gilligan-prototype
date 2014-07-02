@@ -1,5 +1,7 @@
 #include "connectdialog.h"
 
+#include <QHostInfo>
+
 ConnectDialog::ConnectDialog(QWidget *parent) :
     QDialog(parent)
 {
@@ -12,11 +14,14 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     handleEdit = new QLineEdit;
     passphraseEdit = new QLineEdit;
     passphraseEdit->setEchoMode(QLineEdit::Password);
+    clientEdit = new QLineEdit;
+    clientEdit->setPlaceholderText(QHostInfo::localHostName());
 
     QFormLayout *formLayout = new QFormLayout;
     formLayout->addRow(tr("&Server:"), serverEdit);
     formLayout->addRow(tr("&Handle:"), handleEdit);
     formLayout->addRow(tr("&Passphrase:"), passphraseEdit);
+    formLayout->addRow(tr("&Client:"), clientEdit);
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(connectButton, QDialogButtonBox::AcceptRole);
@@ -44,4 +49,13 @@ QString ConnectDialog::handle()
 QString ConnectDialog::passphrase()
 {
     return passphraseEdit->text();
+}
+
+QString ConnectDialog::client()
+{
+    QString client = clientEdit->text();
+
+    if(client.length() == 0) client = clientEdit->placeholderText();
+
+    return client;
 }

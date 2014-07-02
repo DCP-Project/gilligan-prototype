@@ -13,6 +13,7 @@ public:
     QString server();
     QString handle();
     QString passphrase();
+    QString client();
 
 private:
     QLabel *explanation;
@@ -20,6 +21,7 @@ private:
     QLineEdit *serverEdit;
     QLineEdit *handleEdit;
     QLineEdit *passphraseEdit;
+    QLineEdit *clientEdit;
 
     QPushButton *connectButton;
 };

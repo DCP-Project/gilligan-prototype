@@ -14,7 +14,7 @@ public:
     ~DCPConnection();
 
     void sendMessage(DCPMessage *message);
-    void connectTo(QString server, QString handle, QString passphrase);
+    void connectTo(QString server, QString handle, QString passphrase, QString client);
     void disconnectFrom();
 
 signals:
