@@ -3,6 +3,8 @@
 #include <QDesktopServices> // open URL
 #include <QUrl> // actual URL to open
 
+#include "utility.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -52,7 +54,7 @@ void MainWindow::netConnect()
 
 void MainWindow::connected()
 {
-    output->append("Now connected");
+    output->insertHtml("Now connected<br>\n");
     connectAct->setEnabled(false);
     disconnectAct->setEnabled(true);
 
@@ -67,7 +69,7 @@ void MainWindow::connected()
 
 void MainWindow::received(DCPMessage *message)
 {
-    output->append("<" + message->source + "> (message)");
+    output->insertHtml(messageRepr(message));
 }
 
 
@@ -316,7 +318,13 @@ void MainWindow::initWidgets()
     setCentralWidget(central);
 
     output = new QTextEdit;
-    output->setEnabled(false);
+    output->setReadOnly(true);
+    output->document()->setDefaultStyleSheet("span.message { display: block; font-family: monospace; }"
+                                             //"span.source { font-weight: bold; }"
+                                             "span.destination { font-style: italic; }"
+                                             "span.command { font-weight: bold; }"
+                                             "span.param { background-color: #eee; }"
+                                             "span.key { font-weight: bold; }");
 
     input = new QLineEdit;
     connect(input, SIGNAL(returnPressed()), this, SLOT(sendMessage()));
