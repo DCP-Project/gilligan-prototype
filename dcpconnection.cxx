@@ -55,7 +55,7 @@ void DCPConnection::dataReady()
             return;     // We can't even get the next packet's size out of it.
 
         bufsize = sock->read(buffer, (qint64)sizeof(quint16));
-        nextsize = htons( *(unsigned short *)buffer );  /* XXX dear god the hax */
+        nextsize = htons( *(unsigned short *)buffer );  // XXX dear god the hax
         fprintf(stderr, "next size is %d\n", nextsize);
     }
 
@@ -73,6 +73,15 @@ void DCPConnection::dataReady()
         delete message;
         memmove(buffer, buffer + nextsize, bufsize - nextsize);
         bufsize -= nextsize;
+        if(bufsize > 1)
+        {
+            nextsize = htons( *(unsigned short *)buffer );  // XXX dear god the hax
+        }
+        else if(bufsize == 1)
+        {
+            abort();    // this is seriously better than any hax I could think up
+        }
+        // else it's 0 and will be handled above
     }
 }
 
