@@ -59,7 +59,7 @@ void DCPConnection::dataReady()
         fprintf(stderr, "next size is %d\n", nextsize);
     }
 
-    bufsize += sock->read(buffer, sock->bytesAvailable());
+    bufsize += sock->read(buffer + bufsize, nextsize - bufsize);
 
     if(bufsize >= nextsize)
     {
