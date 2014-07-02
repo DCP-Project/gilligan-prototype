@@ -5,7 +5,6 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 {
     connectButton = new QPushButton(tr("&Connect"));
     connectButton->setDefault(true);
-    connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     explanation = new QLabel(tr("Enter your credentials and Gilligan will attempt to connect you to DCP."));
 
@@ -22,6 +21,8 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(connectButton, QDialogButtonBox::AcceptRole);
     buttonBox->addButton(QDialogButtonBox::Close);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(explanation);
