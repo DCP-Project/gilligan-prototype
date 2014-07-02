@@ -12,15 +12,22 @@ DCPConnection::DCPConnection(QObject *parent) :
 
     bufsize = nextsize = 0;
     buffer = new char[BUF_MAX_SIZE];
+    initialMsg = NULL;
 
     connect(sock, SIGNAL(readyRead()), this, SLOT(dataReady()));
     connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
     connect(sock, SIGNAL(connected()), this, SLOT(connected()));
 }
 
-void DCPConnection::connectTo(QString server)
+void DCPConnection::connectTo(QString server, QString handle, QString passphrase)
 {
     sock->connectToHost(server, 7266);
+
+    QMultiHash<QString, QString> signon;
+    signon.insert("handle", handle);
+    signon.insert("password", passphrase);
+    signon.insert("options", "*");
+    initialMsg = new DCPMessage("*", "*", "SIGNON", signon);
 }
 
 void DCPConnection::disconnectFrom()
@@ -31,6 +38,12 @@ void DCPConnection::disconnectFrom()
 void DCPConnection::connected()
 {
     emit networkConnected();
+    if(initialMsg != NULL)
+    {
+        this->sendMessage(initialMsg);
+        delete initialMsg;
+        initialMsg = NULL;
+    }
 }
 
 void DCPConnection::sendMessage(DCPMessage *message)

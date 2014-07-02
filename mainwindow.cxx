@@ -3,6 +3,7 @@
 #include <QDesktopServices> // open URL
 #include <QUrl> // actual URL to open
 
+#include "connectdialog.h"
 #include "utility.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -36,18 +37,15 @@ MainWindow::~MainWindow()
 /** netConnect - connect to a network */
 void MainWindow::netConnect()
 {
-    QString serverName;
+    ConnectDialog dialog;
+    dialog.exec();
 
-    QString dialogMsg = tr("Enter the name or IP address of a DCP network, "
-                           "and Gilligan will try to connect you.");
-    serverName = QInputDialog::getText(this, tr("Connect To Server"),
-                                       dialogMsg);
     conn = new DCPConnection(this);
 
     connect(conn, SIGNAL(networkConnected()), this, SLOT(connected()));
     connect(conn, SIGNAL(messageReceived(DCPMessage*)), this, SLOT(received(DCPMessage*)));
 
-    conn->connectTo(serverName);
+    conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase());
 }
 
 
@@ -57,12 +55,6 @@ void MainWindow::connected()
     output->insertHtml("Now connected<br>\n");
     connectAct->setEnabled(false);
     disconnectAct->setEnabled(true);
-
-    QMultiHash<QString, QString> signon;
-    signon.insert("handle", "andrew@foxkit.us");
-    signon.insert("password", "arffoxes");
-    signon.insert("options", "*");
-    conn->sendMessage(new DCPMessage("*", "*", "SIGNON", signon));
 }
 
 

@@ -16,9 +16,11 @@ SOURCES += main.cxx\
         mainwindow.cxx \
     dcpconnection.cxx \
     dcpmessage.cxx \
-    utility.cxx
+    utility.cxx \
+    connectdialog.cxx
 
 HEADERS  += mainwindow.h \
     dcpconnection.h \
     dcpmessage.h \
-    utility.h
+    utility.h \
+    connectdialog.h

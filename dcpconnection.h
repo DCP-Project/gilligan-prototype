@@ -14,7 +14,7 @@ public:
     ~DCPConnection();
 
     void sendMessage(DCPMessage *message);
-    void connectTo(QString server);
+    void connectTo(QString server, QString handle, QString passphrase);
     void disconnectFrom();
 
 signals:
@@ -31,6 +31,7 @@ private slots:
 private:
     QTcpSocket *sock;
     char *buffer;  quint16 bufsize;  quint16 nextsize;
+    DCPMessage *initialMsg;
 };
 
 #endif // DCPCONNECTION_H
