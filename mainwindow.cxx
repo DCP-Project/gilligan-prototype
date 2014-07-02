@@ -3,6 +3,7 @@
 #include <KApplication>
 #include <KAboutApplicationDialog>
 #include <KCmdLineArgs>
+#include <QtGui>
 #include <QDesktopServices> // open URL
 #include <QUrl> // actual URL to open
 
@@ -22,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle(tr("Not Connected - Gilligan"));
     setMinimumSize(480, 320);
-    resize(480, 320);
+    resize(700, 500);
 
     conn = NULL;
 }
