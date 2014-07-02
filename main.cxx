@@ -13,7 +13,7 @@ static KAboutData about(
         KAboutData::License_BSD,
         ki18n("© 2014"),
         KLocalizedString(),
-        "http://foxkit.us/dcp/",
+        "http://dcp.foxkit.us/",
         "not yet available");
 
 int main(int argc, char *argv[])
