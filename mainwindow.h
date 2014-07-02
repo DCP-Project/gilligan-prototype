@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtGui>
+#include <QLineEdit>
+#include <QTextEdit>
 #include "dcpconnection.h"
 
 class MainWindow : public QMainWindow
