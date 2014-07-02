@@ -11,6 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = gilligan
 TEMPLATE = app
 
+INCLUDEPATH += /usr/include/KDE
+LIBS += -lkdecore -lkdeui
+
 
 SOURCES += main.cxx\
         mainwindow.cxx \

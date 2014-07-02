@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 
+#include <KApplication>
+#include <KAboutApplicationDialog>
+#include <KCmdLineArgs>
 #include <QDesktopServices> // open URL
 #include <QUrl> // actual URL to open
 
@@ -234,7 +237,8 @@ void MainWindow::showSpec()
 /** about - show information about us */
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("Gilligan 0.1"), tr("Put stuff here."));
+    KAboutApplicationDialog ad(KCmdLineArgs::aboutData());
+    ad.exec();
 }
 
 
@@ -254,7 +258,7 @@ void MainWindow::initActions()
     quitAct = new QAction(tr("&Quit Gilligan"), this);
     quitAct->setShortcuts(QKeySequence::Quit);
     quitAct->setStatusTip(tr("Close Gilligan."));
-    connect(disconnectAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect(quitAct, SIGNAL(triggered()), kapp, SLOT(quit()));
 
     joinAct = new QAction(tr("&Join Group..."), this);
     joinAct->setStatusTip(tr("Join a group."));
