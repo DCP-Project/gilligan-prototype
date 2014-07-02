@@ -43,7 +43,6 @@ void DCPConnection::connected()
     if(initialMsg != NULL)
     {
         this->sendMessage(initialMsg);
-        delete initialMsg;
         initialMsg = NULL;
     }
 }
@@ -60,6 +59,9 @@ void DCPConnection::sendMessage(DCPMessage *message)
     }
 
     sock->write(buffer, len);
+    delete[] buffer;
+
+    delete message;
 }
 
 void DCPConnection::dataReady()
@@ -107,5 +109,5 @@ void DCPConnection::handleError(QAbstractSocket::SocketError socketError)
 
 DCPConnection::~DCPConnection()
 {
-    delete buffer;
+    delete[] buffer;
 }
