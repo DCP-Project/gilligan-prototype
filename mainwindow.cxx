@@ -46,11 +46,41 @@ void MainWindow::netConnect()
     {
         conn = new DCPConnection;
 
-        connect(conn, SIGNAL(networkConnected()), this, SLOT(connected()));
-        connect(conn, SIGNAL(messageReceived(DCPMessage*)), this, SLOT(received(DCPMessage*)));
+        connect(conn, SIGNAL(networkConnected()),
+                this, SLOT(connected()));
+        connect(conn, SIGNAL(messageReceived(DCPMessage*)),
+                this, SLOT(received(DCPMessage*)));
+        connect(conn, SIGNAL(errorReceived(QAbstractSocket::SocketError)),
+                this, SLOT(sockError(QAbstractSocket::SocketError)));
 
-        conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(), dialog.client());
+        conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(),
+                        dialog.client());
     }
+}
+
+
+
+void MainWindow::sockError(QAbstractSocket::SocketError error)
+{
+    QString friendlyError = tr("Unknown error ") + QString::number(error);
+    switch(error)
+    {
+    case QAbstractSocket::ConnectionRefusedError:
+        friendlyError = tr("Connection refused");
+        break;
+    case QAbstractSocket::RemoteHostClosedError:
+        friendlyError = tr("Remote host closed the connection");
+        break;
+    case QAbstractSocket::HostNotFoundError:
+        friendlyError = tr("Host not found");
+        break;
+    case QAbstractSocket::SslHandshakeFailedError:
+        friendlyError = tr("SSL handshake failed");
+        break;
+    }
+
+    QString message = tr("While attempting to connect: %2.").arg(friendlyError);
+    QMessageBox::critical(this, tr("Cannot connect to server"), message);
 }
 
 

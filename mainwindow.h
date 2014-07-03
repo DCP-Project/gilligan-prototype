@@ -26,6 +26,7 @@ private slots:
 
     void connected();
     void received(DCPMessage *);
+    void sockError(QAbstractSocket::SocketError);
 
 private:
     void initActions();
