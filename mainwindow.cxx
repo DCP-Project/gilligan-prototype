@@ -77,6 +77,8 @@ void MainWindow::sockError(QAbstractSocket::SocketError error)
     case QAbstractSocket::SslHandshakeFailedError:
         friendlyError = tr("SSL handshake failed");
         break;
+    default:
+        break;
     }
 
     QString message = tr("Connection problem: %1.").arg(friendlyError);
