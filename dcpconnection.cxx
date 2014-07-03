@@ -8,7 +8,21 @@
 DCPConnection::DCPConnection(QObject *parent) :
     QObject(parent)
 {
-    sock = new QTcpSocket(this);
+    sock = new QSslSocket(this);
+    /****
+     * !!!!! XXX TODO BAD !!!!! *
+     * this will just get the certificate from the server and not care whether
+     * it is valid or not.  THIS WILL ALLOW EASY DNS-BASED SPOOFING ATTACKS!
+     * DO NOT EVER EVER EVER EVER USE CODE WITH ::QueryPeer IN PRODUCTION!
+     * I MEAN IT
+     * REWRITE THIS BEFORE MAKING A PRODUCTION CLIENT
+     * no really
+     * I mean it.
+     ****/
+    sock->setPeerVerifyMode(QSslSocket::QueryPeer);
+#if QT_VERSION >= 0x050000
+    sock->setProtocol(QSsl::TlsV1_2);
+#endif
 
     bufsize = nextsize = 0;
     buffer = new char[BUF_MAX_SIZE];
@@ -16,12 +30,12 @@ DCPConnection::DCPConnection(QObject *parent) :
 
     connect(sock, SIGNAL(readyRead()), this, SLOT(dataReady()));
     connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleError(QAbstractSocket::SocketError)));
-    connect(sock, SIGNAL(connected()), this, SLOT(connected()));
+    connect(sock, SIGNAL(encrypted()), this, SLOT(connected()));
 }
 
 void DCPConnection::connectTo(QString server, QString handle, QString passphrase, QString client)
 {
-    sock->connectToHost(server, 7266);
+    sock->connectToHostEncrypted(server, 7266);
 
     QMultiHash<QString, QString> signon;
     signon.insert("handle", handle);

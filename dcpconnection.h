@@ -2,7 +2,7 @@
 #define DCPCONNECTION_H
 
 #include <QObject>
-#include <QTcpSocket>
+#include <QSslSocket>
 #include "dcpmessage.h"
 
 class DCPConnection : public QObject
@@ -29,7 +29,7 @@ private slots:
     void handleError(QAbstractSocket::SocketError socketError);
 
 private:
-    QTcpSocket *sock;
+    QSslSocket *sock;
     char *buffer;  quint16 bufsize;  quint16 nextsize;
     DCPMessage *initialMsg;
 };
