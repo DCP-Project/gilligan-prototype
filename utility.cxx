@@ -1,5 +1,7 @@
 #include "utility.h"
 
+#include <QSetIterator>
+
 QString messageRepr(DCPMessage *message, bool html)
 {
     QString repr = "";
@@ -37,7 +39,7 @@ QString messageRepr(DCPMessage *message, bool html)
     if(html) repr += "<span class=\"params\">";
     repr += "{";
 
-    QListIterator<QString> key_iterator(message->params.keys());
+    QSetIterator<QString> key_iterator(message->params.keys().toSet());
     while(key_iterator.hasNext())
     {
         QString key = key_iterator.next();
