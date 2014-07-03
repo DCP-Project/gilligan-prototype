@@ -253,7 +253,9 @@ def interpret(text):
         return;
     }
 
-    conn->sendMessage(new DCPMessage("*", dest, command, params));
+    DCPMessage *msg = new DCPMessage("*", dest, command, params);
+    output->insertHtml(messageRepr(msg));
+    conn->sendMessage(msg);
 }
 
 
