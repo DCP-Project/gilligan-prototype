@@ -68,7 +68,7 @@ void DCPConnection::sendMessage(DCPMessage *message)
 
     if(len == 0)
     {
-        fprintf(stderr, "oh shit\n");
+        fprintf(stderr, "Failed to convert the message to a raw value\n");
         return;
     }
 
@@ -80,39 +80,49 @@ void DCPConnection::sendMessage(DCPMessage *message)
 
 void DCPConnection::dataReady()
 {
-    if(bufsize == 0)
+    while(sock->bytesAvailable() > 0)
     {
-        if(sock->bytesAvailable() < (int)sizeof(quint16))
-            return;     // We can't even get the next packet's size out of it.
-
-        bufsize = sock->read(buffer, (qint64)sizeof(quint16));
-        nextsize = htons( *(unsigned short *)buffer );  // XXX dear god the hax
-        fprintf(stderr, "next size is %d\n", nextsize);
-    }
-
-    bufsize += sock->read(buffer + bufsize, nextsize - bufsize);
-
-    if(bufsize >= nextsize)
-    {
-        DCPMessage *message = DCPMessage::fromBytes(buffer, nextsize);
-        if(message == NULL)
+        if(bufsize == 0)
         {
-            fprintf(stderr, "the message failed, oh well\n");
-            return;
-        }
-        emit messageReceived(message);
-        delete message;
-        memmove(buffer, buffer + nextsize, bufsize - nextsize);
-        bufsize -= nextsize;
-        if(bufsize > 1)
-        {
+            if(sock->bytesAvailable() < (int)sizeof(quint16))
+                return;     // We can't even get the next packet's size out of it.
+
+            bufsize = sock->read(buffer, (qint64)sizeof(quint16));
             nextsize = htons( *(unsigned short *)buffer );  // XXX dear god the hax
         }
-        else if(bufsize == 1)
+
+        bufsize += sock->read(buffer + bufsize, nextsize - bufsize);
+
+        if(bufsize >= nextsize)
         {
-            abort();    // this is seriously better than any hax I could think up
+            DCPMessage *message = DCPMessage::fromBytes(buffer, nextsize);
+            if(message == NULL)
+            {
+                return;
+            }
+            emit messageReceived(message);
+            delete message;
+            memmove(buffer, buffer + nextsize, bufsize - nextsize);
+            bufsize -= nextsize;
+            if(bufsize > 1)
+            {
+                nextsize = htons( *(unsigned short *)buffer );  // XXX dear god the hax
+            }
+            else if(bufsize == 1)
+            {
+                if(sock->bytesAvailable() > 0)
+                {
+                    bufsize += sock->read(buffer + bufsize, 1);
+                } else {
+                    abort();    // this is seriously better than any hax I could think up
+                }
+            }
+            // else it's 0 and will be handled above
         }
-        // else it's 0 and will be handled above
+        else
+        {
+            break;
+        }
     }
 }
 
