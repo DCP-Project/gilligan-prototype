@@ -42,14 +42,15 @@ MainWindow::~MainWindow()
 void MainWindow::netConnect()
 {
     ConnectDialog dialog;
-    dialog.exec();
+    if(dialog.exec() == QDialog::Accepted)
+    {
+        conn = new DCPConnection;
 
-    conn = new DCPConnection;
+        connect(conn, SIGNAL(networkConnected()), this, SLOT(connected()));
+        connect(conn, SIGNAL(messageReceived(DCPMessage*)), this, SLOT(received(DCPMessage*)));
 
-    connect(conn, SIGNAL(networkConnected()), this, SLOT(connected()));
-    connect(conn, SIGNAL(messageReceived(DCPMessage*)), this, SLOT(received(DCPMessage*)));
-
-    conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(), dialog.client());
+        conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(), dialog.client());
+    }
 }
 
 
