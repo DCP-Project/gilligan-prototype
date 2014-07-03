@@ -79,8 +79,8 @@ void MainWindow::sockError(QAbstractSocket::SocketError error)
         break;
     }
 
-    QString message = tr("While attempting to connect: %2.").arg(friendlyError);
-    QMessageBox::critical(this, tr("Cannot connect to server"), message);
+    QString message = tr("Connection problem: %1.").arg(friendlyError);
+    QMessageBox::critical(this, tr("Socket error"), message);
 }
 
 
@@ -193,7 +193,7 @@ def interpret(text):
     {
         // Do a command.
         int cmd_length = raw_input.indexOf(' ');
-        command = raw_input.mid(1, cmd_length);
+        command = raw_input.mid(1, cmd_length - 1);
 
         raw_input = raw_input.mid(cmd_length + 1);
 
