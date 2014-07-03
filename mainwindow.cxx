@@ -77,8 +77,47 @@ void MainWindow::sockError(QAbstractSocket::SocketError error)
     case QAbstractSocket::SslHandshakeFailedError:
         friendlyError = tr("SSL handshake failed");
         break;
-    default:
+    case QAbstractSocket::SocketResourceError:
+        friendlyError = tr("Out of sockets");
         break;
+    case QAbstractSocket::SocketTimeoutError:
+        friendlyError = tr("Connection timed out");
+        break;
+    case QAbstractSocket::NetworkError:
+        friendlyError = tr("Network error");
+        break;
+    case QAbstractSocket::AddressInUseError:
+        friendlyError = tr("Address already in use");
+        break;
+    case QAbstractSocket::SocketAddressNotAvailableError:
+        friendlyError = tr("Socket address not available");
+        break;
+    case QAbstractSocket::UnsupportedSocketOperationError:
+        friendlyError = tr("Operation not supported");
+        break;
+    case QAbstractSocket::UnfinishedSocketOperationError:
+        friendlyError = tr("Unfinished socket operation");
+        break;
+    case QAbstractSocket::ProxyAuthenticationRequiredError:
+        friendlyError = tr("Proxy requires authentication");
+        break;
+    case QAbstractSocket::ProxyConnectionRefusedError:
+        friendlyError = tr("Proxy: connection refused");
+        break;
+    case QAbstractSocket::ProxyConnectionClosedError:
+        friendlyError = tr("Proxy: connection closed");
+        break;
+    case QAbstractSocket::ProxyConnectionTimeoutError:
+        friendlyError = tr("Proxy: connection timed out");
+        break;
+    case QAbstractSocket::ProxyNotFoundError:
+        friendlyError = tr("Proxy: not found");
+        break;
+    case QAbstractSocket::ProxyProtocolError:
+        friendlyError = tr("Proxy: protocol error");
+        break;
+    default:
+        friendlyError = tr("Unknown socket error");
     }
 
     QString message = tr("Connection problem: %1.").arg(friendlyError);
