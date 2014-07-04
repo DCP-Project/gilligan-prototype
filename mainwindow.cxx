@@ -140,6 +140,8 @@ void MainWindow::sockError(QAbstractSocket::SocketError error)
 
     QString message = tr("Connection problem: %1.").arg(friendlyError);
     QMessageBox::critical(this, tr("Socket error"), message);
+
+    this->disconnect();
 }
 
 
