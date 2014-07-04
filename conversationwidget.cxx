@@ -8,7 +8,7 @@
 #include <stdio.h> // fprintf, stderr
 
 ConversationWidget::ConversationWidget(QString name, bool is_group, QWidget *parent) :
-    name(name), group(is_group), QWidget(parent)
+    QWidget(parent), name(name), group(is_group)
 {
     nameLabel = new QLabel;
     nameLabel->setText(name);
@@ -55,11 +55,26 @@ void ConversationWidget::messageReceived(QString dontcare, DCPMessage *message)
 
 void ConversationWidget::messageReceived(DCPMessage *message)
 {
-    if(message->command != "message")
+    if(message->command == "message")
+    {
+        convoEdit->insertHtml(prettyMessage(message));
+    }
+    else if(message->command == "group-names")
+    {
+        QListIterator<QString> iterator(message->params.values("users"));
+        iterator.toBack();
+        while(iterator.hasPrevious())
+        {
+            nameList->addItem(iterator.previous());
+        }
+    }
+    else if(message->command == "group-info")
+    {
+        convoEdit->insertHtml(prettyMessage(message));
+    }
+    else
     {
         fprintf(stderr, "not handling non-message message yet, sorry\n");
         return;
     }
-
-    convoEdit->insertHtml(prettyMessage(message));
 }
