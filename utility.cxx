@@ -78,16 +78,37 @@ QString messageRepr(DCPMessage *message, bool html)
 
 QString prettyMessage(DCPMessage *message)
 {
-    QString repr = "<div class=\"message\">";
+    if(message->command == "message")
+    {
+        QString repr = "<div class=\"message\">";
 
-    repr += "<span class=\"sender\">&lt;";
-    repr += message->source;
-    repr += "&gt;</span> ";
+        repr += "<span class=\"sender\">&lt;";
+        repr += message->source;
+        repr += "&gt;</span> ";
 
-    repr += "<span class=\"content\">";
-    repr += message->params.value("body", "");
-    repr += "</span>";
+        repr += "<span class=\"content\">";
+        repr += message->params.value("body", "");
+        repr += "</span>";
 
-    repr += "</div>";
-    return repr;
+        repr += "</div><br>\n";
+        return repr;
+    }
+    else if(message->command == "group-info")
+    {
+        QString topic = message->params.value("topic");
+        if(topic.length() == 0)
+        {
+            return "<div class=\"topic\">No topic for this group.</div><hr/><br>\n";
+        }
+        else
+        {
+            return "<div class=\"topic\">Topic for this group: " +
+                    topic + "</div><hr/><br>\n";
+        }
+    }
+    else
+    {
+        return "<div class=\"error\">Can't coerce " + message->command +
+                "to anything pretty.</div><br>";
+    }
 }
