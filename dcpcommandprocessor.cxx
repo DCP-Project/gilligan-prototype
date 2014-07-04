@@ -1,8 +1,9 @@
 #include "dcpcommandprocessor.h"
 
 DCPCommandProcessor::DCPCommandProcessor(DCPConnection *conn, QObject *parent) :
-    connection(conn), QObject(parent)
+    QObject(parent)
 {
+    this->connection = conn;
 }
 
 void DCPCommandProcessor::sendMessage(DCPMessage *message) const
@@ -10,14 +11,14 @@ void DCPCommandProcessor::sendMessage(DCPMessage *message) const
     connection->sendMessage(message);
 }
 
-void DCPCommandProcessor::defaultPingReceived(DCPMessage *message)
+void DCPCommandProcessor::defaultPingReceived(DCPMessage *ping)
 {
-    DCPMessage *message = new DCPMessage("*",
-                                         message->source,
-                                         "pong",
-                                         message->params);
+    DCPMessage *msg = new DCPMessage("*",
+                                     ping->source,
+                                     "pong",
+                                     ping->params);
 
-    this->sendMessage(message);
+    this->sendMessage(msg);
 }
 
 void DCPCommandProcessor::rawMessageReceived(DCPMessage *message)
