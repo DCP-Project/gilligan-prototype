@@ -26,10 +26,12 @@ MainWindow::MainWindow(QWidget *parent)
     resize(700, 500);
 
     conn = NULL;
+    processor = NULL;
 }
 
 MainWindow::~MainWindow()
 {
+    delete processor;
     delete conn;
 }
 
@@ -239,6 +241,8 @@ void MainWindow::disconnect()
 
 void MainWindow::join()
 {
+    if(processor == NULL) return;
+
     QString group = QInputDialog::getText(this, tr("Group Name"),
                                           tr("Enter the name of the group to join."));
     DCPMessage *join = new DCPMessage("*",
@@ -280,53 +284,12 @@ void MainWindow::conversation()
 
 void MainWindow::sendMessage()
 {
-    // TODO STUB
-    /*
-def interpret(text):
-   kval = defaultdict(list)
-   dest = ''
-
-   # State for the thing
-   inbracket = False
-   esc = False
-   found_dest = False
-   key = ''
-   val = ''
-   do_key = True
-   for ch in text:
-         if inbracket:
-            if ch == ']' and not esc:
-               # Found a key:value pair
-               inbracket = False
-               kval[key].append(val)
-               key = val = ''
-            elif ch == '=' and not esc:
-               do_key = False
-            else:
-               if esc or ch != '\\':
-                  if do_key:
-                     key += ch
-                  else:
-                     val += ch
-         else:
-            if ch == '[' and not esc:
-               inbracket = True
-               do_key = True
-            else:
-               if not found_dest and (esc or ch != '\\'):
-                  if ch != ' ':
-                     dest += ch
-                  else:
-                     found_dest = True
-
-         esc = (ch == '\\' and not esc)
-
-   return (dest, kval)
-*/
     QString dest, command;
     QMultiHash<QString, QString> params;
 
     QString raw_input = input->text();
+
+    if(processor == NULL) return;
     // clear out the text
     input->setText("");
 
