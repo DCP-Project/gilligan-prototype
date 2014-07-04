@@ -20,10 +20,12 @@ SOURCES += main.cxx\
     dcpconnection.cxx \
     dcpmessage.cxx \
     utility.cxx \
-    connectdialog.cxx
+    connectdialog.cxx \
+    dcpcommandprocessor.cxx
 
 HEADERS  += mainwindow.h \
     dcpconnection.h \
     dcpmessage.h \
     utility.h \
-    connectdialog.h
+    connectdialog.h \
+    dcpcommandprocessor.h

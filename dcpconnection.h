@@ -17,6 +17,8 @@ public:
     void connectTo(QString server, QString handle, QString passphrase, QString client);
     void disconnectFrom();
 
+    const QString handle();
+
 signals:
     void networkConnected();
     void messageReceived(DCPMessage *message);
@@ -32,6 +34,8 @@ private:
     QSslSocket *sock;
     char *buffer;  quint16 bufsize;  quint16 nextsize;
     DCPMessage *initialMsg;
+
+    QString myHandle;
 };
 
 #endif // DCPCONNECTION_H
