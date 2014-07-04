@@ -29,6 +29,8 @@ private:
     QListWidget *nameList;
 
     bool group;
+
+    void append(QString html);
 };
 
 #endif // CONVERSATIONWIDGET_H

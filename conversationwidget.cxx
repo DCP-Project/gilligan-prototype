@@ -53,11 +53,18 @@ void ConversationWidget::messageReceived(QString dontcare, DCPMessage *message)
     this->messageReceived(message);
 }
 
+void ConversationWidget::append(QString html)
+{
+    QTextCursor cursor = convoEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertHtml(html);
+}
+
 void ConversationWidget::messageReceived(DCPMessage *message)
 {
     if(message->command == "message")
     {
-        convoEdit->insertHtml(prettyMessage(message));
+        this->append(prettyMessage(message));
     }
     else if(message->command == "group-names")
     {
@@ -70,7 +77,7 @@ void ConversationWidget::messageReceived(DCPMessage *message)
     }
     else if(message->command == "group-info")
     {
-        convoEdit->insertHtml(prettyMessage(message));
+        this->append(prettyMessage(message));
     }
     else
     {
