@@ -51,7 +51,7 @@ void DCPCommandProcessor::rawMessageReceived(DCPMessage *message)
     else if(message->command.toLower() == "group-info" ||
             message->command.toLower() == "group-names")
     {
-        emit groupMessageReceived(message->dest, message);
+        emit groupMessageReceived(message->source, message);
     }
     else if(message->command.toLower() == "message")
     {
