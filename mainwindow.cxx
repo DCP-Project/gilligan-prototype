@@ -225,7 +225,7 @@ void MainWindow::disconnect()
     conn = NULL;
 
     setWindowTitle(tr("Not Connected - Gilligan"));
-    output->insertHtml("Disconnected.");
+    output->insertHtml(tr("Disconnected.<br>\n"));
 
     disconnectAct->setEnabled(false);
     connectAct->setEnabled(true);
