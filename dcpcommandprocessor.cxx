@@ -61,7 +61,13 @@ void DCPCommandProcessor::rawMessageReceived(DCPMessage *message)
         }
         else
         {
-            emit privateMessageReceived(message->source, message);
+            QString convo;
+            if(message->source == connection->handle())
+                convo = message->dest;
+            else
+                convo = message->source;
+
+            emit privateMessageReceived(convo, message);
         }
     }
 }
