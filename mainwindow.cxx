@@ -55,6 +55,24 @@ void MainWindow::netConnect()
 
         conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(),
                         dialog.client());
+
+        processor = new DCPCommandProcessor(conn, this);
+
+        connect(conn, SIGNAL(messageReceived(DCPMessage*)),
+                processor, SLOT(rawMessageReceived(DCPMessage*)));
+
+        connect(processor, SIGNAL(pingReceived(DCPMessage*)),
+                processor, SLOT(defaultPingReceived(DCPMessage*)));
+
+        connect(processor, SIGNAL(groupJoined(QString,DCPMessage*)),
+                this, SLOT(groupJoined(QString,DCPMessage*)));
+        connect(processor, SIGNAL(groupLeft(QString,DCPMessage*)),
+                this, SLOT(groupLeft(QString,DCPMessage*)));
+
+        connect(processor, SIGNAL(groupMessageReceived(QString,DCPMessage*)),
+                this, SLOT(groupReceived(QString,DCPMessage*)));
+        connect(processor, SIGNAL(privateMessageReceived(QString,DCPMessage*)),
+                this, SLOT(privateReceived(QString,DCPMessage*)));
     }
 }
 
@@ -132,6 +150,7 @@ void MainWindow::connected()
     setWindowTitle(tr("Connected - Gilligan"));
     connectAct->setEnabled(false);
     disconnectAct->setEnabled(true);
+    joinAct->setEnabled(true);
 }
 
 
@@ -143,8 +162,59 @@ void MainWindow::received(DCPMessage *message)
 
 
 
+void MainWindow::groupJoined(QString name, DCPMessage *message)
+{
+    if(!widgetMapping.keys().contains(name))
+    {
+        ConversationWidget *w = new ConversationWidget(name, true);
+        tabs->addTab(w, name);
+        widgetMapping.insert(name, w);
+    }
+}
+
+
+
+void MainWindow::groupReceived(QString name, DCPMessage *message)
+{
+    if(!widgetMapping.keys().contains(name))
+    {
+        fprintf(stderr, "received a message from a group we aren't joined to?\n");
+        this->groupJoined(name, message);
+    }
+
+    widgetMapping.value(name)->messageReceived(name, message);
+}
+
+
+
+void MainWindow::groupLeft(QString, DCPMessage *)
+{
+    // TODO STUB
+}
+
+
+
+void MainWindow::privateReceived(QString name, DCPMessage *message)
+{
+    if(!widgetMapping.keys().contains(name))
+    {
+        ConversationWidget *w = new ConversationWidget(name, true);
+        tabs->addTab(w, name);
+        widgetMapping.insert(name, w);
+        w->messageReceived(name, message);
+        return;
+    }
+
+    widgetMapping.value(name)->messageReceived(name, message);
+}
+
+
+
 void MainWindow::disconnect()
 {
+    delete processor;
+    processor = NULL;
+
     delete conn;
     conn = NULL;
 
@@ -153,13 +223,21 @@ void MainWindow::disconnect()
 
     disconnectAct->setEnabled(false);
     connectAct->setEnabled(true);
+
+    joinAct->setEnabled(false);
 }
 
 
 
 void MainWindow::join()
 {
-    // TODO STUB
+    QString group = QInputDialog::getText(this, tr("Group Name"),
+                                          tr("Enter the name of the group to join."));
+    DCPMessage *join = new DCPMessage("*",
+                                      group,
+                                      "group-enter",
+                                      QMultiHash<QString,QString>());
+    processor->sendMessage(join);
 }
 
 
@@ -404,8 +482,11 @@ void MainWindow::initWidgets()
     input = new QLineEdit;
     connect(input, SIGNAL(returnPressed()), this, SLOT(sendMessage()));
 
+    tabs = new QTabWidget;
+    tabs->addTab(output, tr("Server Console"));
+
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(output);
+    layout->addWidget(tabs);
     layout->addWidget(input);
     central->setLayout(layout);
 }

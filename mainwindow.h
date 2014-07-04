@@ -5,6 +5,8 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include "dcpconnection.h"
+#include "dcpcommandprocessor.h"
+#include "conversationwidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -28,6 +30,11 @@ private slots:
     void received(DCPMessage *);
     void sockError(QAbstractSocket::SocketError);
 
+    void groupJoined(QString, DCPMessage *);
+    void groupLeft(QString, DCPMessage *);
+    void groupReceived(QString, DCPMessage *);
+    void privateReceived(QString, DCPMessage *);
+
 private:
     void initActions();
     void initMenus();
@@ -49,8 +56,13 @@ private:
 
     DCPConnection *conn;
 
+    QTabWidget *tabs;
     QTextEdit *output;
     QLineEdit *input;
+
+    DCPCommandProcessor *processor;
+
+    QHash<QString, ConversationWidget *> widgetMapping;
 };
 
 #endif // MAINWINDOW_H

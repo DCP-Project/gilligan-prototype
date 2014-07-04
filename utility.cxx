@@ -75,3 +75,19 @@ QString messageRepr(DCPMessage *message, bool html)
 
     return repr;
 }
+
+QString prettyMessage(DCPMessage *message)
+{
+    QString repr = "<div class=\"message\">";
+
+    repr += "<span class=\"sender\">";
+    repr += message->source;
+    repr += "</span>";
+
+    repr += "<span class=\"content\">";
+    repr += message->params.value("body", "");
+    repr += "</span>";
+
+    repr += "</div>";
+    return repr;
+}

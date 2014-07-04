@@ -21,11 +21,13 @@ SOURCES += main.cxx\
     dcpmessage.cxx \
     utility.cxx \
     connectdialog.cxx \
-    dcpcommandprocessor.cxx
+    dcpcommandprocessor.cxx \
+    conversationwidget.cxx
 
 HEADERS  += mainwindow.h \
     dcpconnection.h \
     dcpmessage.h \
     utility.h \
     connectdialog.h \
-    dcpcommandprocessor.h
+    dcpcommandprocessor.h \
+    conversationwidget.h
