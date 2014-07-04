@@ -170,6 +170,11 @@ void MainWindow::groupJoined(QString name, DCPMessage *message)
         tabs->addTab(w, name);
         widgetMapping.insert(name, w);
     }
+
+    if(message->source != conn->handle())
+    {
+        widgetMapping.value(name)->messageReceived(name, message);
+    }
 }
 
 
@@ -366,16 +371,21 @@ def interpret(text):
             esc = (ch == '\\' && !esc);
         }
     } else {
-        /* XXX */
-        // dest = currentConversation->name();
-        // command = "message";
-        // params.insert("body", raw_input);
-        return;
+        ConversationWidget *conv = dynamic_cast<ConversationWidget *>(tabs->currentWidget());
+        if(conv == NULL)
+        {
+            output->insertHtml(tr("You can't insert text into the current buffer.<br>\n"));
+            return;
+        }
+
+        dest = widgetMapping.key(conv);
+        command = "message";
+        params.insert("body", raw_input);
     }
 
     DCPMessage *msg = new DCPMessage("*", dest, command, params);
     output->insertHtml(messageRepr(msg));
-    conn->sendMessage(msg);
+    processor->sendMessage(msg);
     delete msg;
 }
 
