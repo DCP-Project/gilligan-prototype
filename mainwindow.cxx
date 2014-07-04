@@ -44,35 +44,38 @@ void MainWindow::netConnect()
     ConnectDialog dialog;
     if(dialog.exec() == QDialog::Accepted)
     {
-        conn = new DCPConnection;
+        if(conn == NULL)
+        {
+            conn = new DCPConnection;
 
-        connect(conn, SIGNAL(networkConnected()),
-                this, SLOT(connected()));
-        connect(conn, SIGNAL(messageReceived(DCPMessage*)),
-                this, SLOT(received(DCPMessage*)));
-        connect(conn, SIGNAL(errorReceived(QAbstractSocket::SocketError)),
-                this, SLOT(sockError(QAbstractSocket::SocketError)));
+            connect(conn, SIGNAL(networkConnected()),
+                    this, SLOT(connected()));
+            connect(conn, SIGNAL(messageReceived(DCPMessage*)),
+                    this, SLOT(received(DCPMessage*)));
+            connect(conn, SIGNAL(errorReceived(QAbstractSocket::SocketError)),
+                    this, SLOT(sockError(QAbstractSocket::SocketError)));
+
+            processor = new DCPCommandProcessor(conn, this);
+
+            connect(conn, SIGNAL(messageReceived(DCPMessage*)),
+                    processor, SLOT(rawMessageReceived(DCPMessage*)));
+
+            connect(processor, SIGNAL(pingReceived(DCPMessage*)),
+                    processor, SLOT(defaultPingReceived(DCPMessage*)));
+
+            connect(processor, SIGNAL(groupJoined(QString,DCPMessage*)),
+                    this, SLOT(groupJoined(QString,DCPMessage*)));
+            connect(processor, SIGNAL(groupLeft(QString,DCPMessage*)),
+                    this, SLOT(groupLeft(QString,DCPMessage*)));
+
+            connect(processor, SIGNAL(groupMessageReceived(QString,DCPMessage*)),
+                    this, SLOT(groupReceived(QString,DCPMessage*)));
+            connect(processor, SIGNAL(privateMessageReceived(QString,DCPMessage*)),
+                    this, SLOT(privateReceived(QString,DCPMessage*)));
+        }
 
         conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(),
                         dialog.client());
-
-        processor = new DCPCommandProcessor(conn, this);
-
-        connect(conn, SIGNAL(messageReceived(DCPMessage*)),
-                processor, SLOT(rawMessageReceived(DCPMessage*)));
-
-        connect(processor, SIGNAL(pingReceived(DCPMessage*)),
-                processor, SLOT(defaultPingReceived(DCPMessage*)));
-
-        connect(processor, SIGNAL(groupJoined(QString,DCPMessage*)),
-                this, SLOT(groupJoined(QString,DCPMessage*)));
-        connect(processor, SIGNAL(groupLeft(QString,DCPMessage*)),
-                this, SLOT(groupLeft(QString,DCPMessage*)));
-
-        connect(processor, SIGNAL(groupMessageReceived(QString,DCPMessage*)),
-                this, SLOT(groupReceived(QString,DCPMessage*)));
-        connect(processor, SIGNAL(privateMessageReceived(QString,DCPMessage*)),
-                this, SLOT(privateReceived(QString,DCPMessage*)));
     }
 }
 
@@ -141,7 +144,7 @@ void MainWindow::sockError(QAbstractSocket::SocketError error)
     QString message = tr("Connection problem: %1.").arg(friendlyError);
     QMessageBox::critical(this, tr("Socket error"), message);
 
-    this->disconnect();
+    emit disconnect();
 }
 
 
@@ -220,11 +223,7 @@ void MainWindow::privateReceived(QString name, DCPMessage *message)
 
 void MainWindow::disconnect()
 {
-    delete processor;
-    processor = NULL;
-
-    delete conn;
-    conn = NULL;
+    conn->disconnectFrom();
 
     setWindowTitle(tr("Not Connected - Gilligan"));
     output->insertHtml(tr("Disconnected.<br>\n"));

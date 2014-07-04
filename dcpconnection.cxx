@@ -43,6 +43,10 @@ void DCPConnection::connectTo(QString server, QString handle, QString passphrase
     signon.insert("client-name", client);
     signon.insert("client-ver", "Gilligan");
     signon.insert("options", "*");
+    if(initialMsg != NULL)
+    {
+        delete initialMsg;
+    }
     initialMsg = new DCPMessage("*", "*", "SIGNON", signon);
 
     this->myHandle = handle;
