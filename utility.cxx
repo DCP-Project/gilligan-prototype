@@ -80,9 +80,9 @@ QString prettyMessage(DCPMessage *message)
 {
     QString repr = "<div class=\"message\">";
 
-    repr += "<span class=\"sender\">";
+    repr += "<span class=\"sender\">&lt;";
     repr += message->source;
-    repr += "</span>";
+    repr += "&gt;</span> ";
 
     repr += "<span class=\"content\">";
     repr += message->params.value("body", "");
