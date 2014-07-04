@@ -21,10 +21,6 @@ public:
     const QString dest;
     const QString command;
     const QMultiHash<QString, QString> params;
-
-private:
-    char *bytes;
-    bool bytes_is_dirty;
 };
 
 #endif // DCPMESSAGE_H

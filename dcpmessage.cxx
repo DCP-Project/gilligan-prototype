@@ -6,8 +6,6 @@ DCPMessage::DCPMessage(QString src, QString dst, QString cmd,
                        QMultiHash<QString, QString> p) :
     source(src), dest(dst), command(cmd), params(p)
 {
-    bytes = NULL;
-    bytes_is_dirty = true;
 }
 
 DCPMessage *DCPMessage::fromBytes(char *bytes, quint16 byte_len)
