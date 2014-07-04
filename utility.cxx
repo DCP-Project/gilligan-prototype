@@ -50,15 +50,16 @@ QString messageRepr(DCPMessage *message, bool html)
         repr += ": [";
 
         QListIterator<QString> value_iterator(message->params.values(key));
-        while(value_iterator.hasNext())
+        value_iterator.toBack();
+        while(value_iterator.hasPrevious())
         {
-            QString value = value_iterator.next();
+            QString value = value_iterator.previous();
 
             if(html) repr += "<span class=\"value\">";
             repr += value;
             if(html) repr += "</span>";
 
-            if(value_iterator.hasNext()) repr += ", ";
+            if(value_iterator.hasPrevious()) repr += ", ";
         }
 
         repr += "]";
