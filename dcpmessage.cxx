@@ -16,7 +16,7 @@ DCPMessage *DCPMessage::fromBytes(char *bytes, quint16 byte_len)
     DCPMessage *msg;
 
     len = ntohs(*(unsigned short *)bytes);
-    if(len > 1370 || len != byte_len)
+    if(len > 1400 || len != byte_len)
     {
         return NULL;    // Bad.
     }

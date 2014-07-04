@@ -75,8 +75,8 @@ void DCPConnection::connected()
 
 void DCPConnection::sendMessage(DCPMessage *message)
 {
-    char *buffer = new char[1370];
-    quint16 len = message->toBytes(&buffer, 1370);
+    char *buffer = new char[1400];
+    quint16 len = message->toBytes(&buffer, 1400);
 
     if(len == 0)
     {
