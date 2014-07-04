@@ -12,7 +12,7 @@ class DCPCommandProcessor : public QObject
 public:
     explicit DCPCommandProcessor(DCPConnection *conn, QObject *parent = 0);
 
-    void sendMessage(DCPMessage *message) const;
+    void sendMessage(DCPMessage *message);
 
 signals:
     void groupJoined(QString group, DCPMessage *message);

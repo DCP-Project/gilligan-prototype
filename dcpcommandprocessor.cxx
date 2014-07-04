@@ -6,9 +6,18 @@ DCPCommandProcessor::DCPCommandProcessor(DCPConnection *conn, QObject *parent) :
     this->connection = conn;
 }
 
-void DCPCommandProcessor::sendMessage(DCPMessage *message) const
+void DCPCommandProcessor::sendMessage(DCPMessage *message)
 {
     connection->sendMessage(message);
+    if(message->command.toLower() == "message")
+    {
+        DCPMessage *msg = new DCPMessage(connection->handle(),
+                                         message->dest,
+                                         message->command,
+                                         message->params);
+        rawMessageReceived(msg);    // lazy.  pretend we received this.
+        delete msg;
+    }
 }
 
 void DCPCommandProcessor::defaultPingReceived(DCPMessage *ping)
@@ -19,6 +28,7 @@ void DCPCommandProcessor::defaultPingReceived(DCPMessage *ping)
                                      ping->params);
 
     this->sendMessage(msg);
+    delete msg;
 }
 
 void DCPCommandProcessor::rawMessageReceived(DCPMessage *message)

@@ -238,6 +238,7 @@ void MainWindow::join()
                                       "group-enter",
                                       QMultiHash<QString,QString>());
     processor->sendMessage(join);
+    delete join;
 }
 
 
@@ -375,6 +376,7 @@ def interpret(text):
     DCPMessage *msg = new DCPMessage("*", dest, command, params);
     output->insertHtml(messageRepr(msg));
     conn->sendMessage(msg);
+    delete msg;
 }
 
 
