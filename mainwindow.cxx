@@ -151,6 +151,7 @@ void MainWindow::connected()
     connectAct->setEnabled(false);
     disconnectAct->setEnabled(true);
     joinAct->setEnabled(true);
+    startConvoAct->setEnabled(true);
 }
 
 
@@ -203,7 +204,7 @@ void MainWindow::privateReceived(QString name, DCPMessage *message)
 {
     if(!widgetMapping.keys().contains(name))
     {
-        ConversationWidget *w = new ConversationWidget(name, true);
+        ConversationWidget *w = new ConversationWidget(name, false);
         tabs->addTab(w, name);
         widgetMapping.insert(name, w);
         w->messageReceived(name, message);
@@ -229,6 +230,7 @@ void MainWindow::disconnect()
     disconnectAct->setEnabled(false);
     connectAct->setEnabled(true);
 
+    startConvoAct->setEnabled(false);
     joinAct->setEnabled(false);
 }
 
@@ -257,7 +259,20 @@ void MainWindow::part()
 
 void MainWindow::conversation()
 {
-    // TODO STUB
+    QString person = QInputDialog::getText(this, tr("Start Chat"),
+                                           tr("Enter the handle of the person you want to chat."));
+    if(!widgetMapping.keys().contains(person))
+    {
+        ConversationWidget *w = new ConversationWidget(person, false);
+        tabs->addTab(w, person);
+        widgetMapping.insert(person, w);
+        tabs->setCurrentWidget(w);
+        return;
+    }
+    else
+    {
+        tabs->setCurrentWidget(widgetMapping.value(person));
+    }
 }
 
 
