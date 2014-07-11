@@ -1,6 +1,7 @@
 #include "dcpmessage.h"
 
 #include <netinet/in.h> // ntohs
+#include <QtDebug>
 
 DCPMessage::DCPMessage(QString src, QString dst, QString cmd,
                        QMultiHash<QString, QString> p) :
@@ -93,12 +94,14 @@ quint16 DCPMessage::toBytes(char **bytes, quint16 max)
         iterate.next();
 
         next = iterate.key().length();
+        Q_ASSERT(next > 0);
         IF_TOO_BIG_GO_AWAY;
         memcpy(buffer, iterate.key().toUtf8().constData(), next);
         buffer += next;
         *buffer++ = '\0';
 
         next = iterate.value().length();
+        Q_ASSERT(next > 0);
         IF_TOO_BIG_GO_AWAY;
         memcpy(buffer, iterate.value().toUtf8().constData(), next);
         buffer += next;
