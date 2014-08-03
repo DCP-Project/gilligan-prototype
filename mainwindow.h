@@ -7,6 +7,7 @@
 #include "dcpconnection.h"
 #include "dcpcommandprocessor.h"
 #include "conversationwidget.h"
+#include "registrationwizard.h"
 
 class MainWindow : public QMainWindow
 {
@@ -17,6 +18,9 @@ public:
     ~MainWindow();
 
 private slots:
+    void startRegistering();
+    void finishRegistering(int);
+
     void netConnect();
     void disconnect();
     void join();
@@ -40,10 +44,13 @@ private:
     void initMenus();
     void initWidgets();
 
+    void maybeCreateConn();
+
     QMenu *connectionMenu;
     QMenu *conversationMenu;
     QMenu *helpMenu;
 
+    QAction *registerAct;
     QAction *connectAct;
     QAction *disconnectAct;
     QAction *quitAct;
@@ -63,6 +70,8 @@ private:
     DCPCommandProcessor *processor;
 
     QHash<QString, ConversationWidget *> widgetMapping;
+
+    RegistrationWizard *wizard;
 };
 
 #endif // MAINWINDOW_H

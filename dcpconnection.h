@@ -15,6 +15,8 @@ public:
 
     void sendMessage(DCPMessage *message);
     void connectTo(QString server, QString handle, QString passphrase, QString client);
+    void registerAndConnect(QString server, QString handle, QString passphrase,
+                            QString client, QString gecos);
     void disconnectFrom();
 
     const QString handle();

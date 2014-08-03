@@ -35,8 +35,6 @@ DCPConnection::DCPConnection(QObject *parent) :
 
 void DCPConnection::connectTo(QString server, QString handle, QString passphrase, QString client)
 {
-    sock->connectToHostEncrypted(server, 7266);
-
     QMultiHash<QString, QString> signon;
     signon.insert("handle", handle);
     signon.insert("password", passphrase);
@@ -50,6 +48,30 @@ void DCPConnection::connectTo(QString server, QString handle, QString passphrase
     initialMsg = new DCPMessage("*", "*", "SIGNON", signon);
 
     this->myHandle = handle;
+
+    sock->connectToHostEncrypted(server, 7266);
+}
+
+void DCPConnection::registerAndConnect(QString server, QString handle,
+                                       QString passphrase, QString client,
+                                       QString gecos)
+{
+    QMultiHash<QString, QString> params;
+    params.insert("handle", handle);
+    params.insert("password", passphrase);
+    params.insert("client-name", client);
+    params.insert("client-ver", "Gilligan");
+    params.insert("gecos", gecos);
+    params.insert("options", "*");
+    if(initialMsg != NULL)
+    {
+        delete initialMsg;
+    }
+    initialMsg = new DCPMessage("*", "*", "REGISTER", params);
+
+    this->myHandle = handle;
+
+    sock->connectToHostEncrypted(server, 7266);
 }
 
 const QString DCPConnection::handle()

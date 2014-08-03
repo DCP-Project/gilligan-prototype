@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     conn = NULL;
     processor = NULL;
+    wizard = NULL;
 }
 
 MainWindow::~MainWindow()
@@ -37,8 +38,73 @@ MainWindow::~MainWindow()
 
 
 
+void MainWindow::maybeCreateConn()
+{
+    if(conn == NULL)
+    {
+        conn = new DCPConnection;
+
+        connect(conn, SIGNAL(networkConnected()),
+                this, SLOT(connected()));
+        connect(conn, SIGNAL(messageReceived(DCPMessage*)),
+                this, SLOT(received(DCPMessage*)));
+        connect(conn, SIGNAL(errorReceived(QAbstractSocket::SocketError)),
+                this, SLOT(sockError(QAbstractSocket::SocketError)));
+
+        if(processor != NULL) delete processor;
+        processor = new DCPCommandProcessor(conn, this);
+
+        connect(conn, SIGNAL(messageReceived(DCPMessage*)),
+                processor, SLOT(rawMessageReceived(DCPMessage*)));
+
+        connect(processor, SIGNAL(pingReceived(DCPMessage*)),
+                processor, SLOT(defaultPingReceived(DCPMessage*)));
+
+        connect(processor, SIGNAL(groupJoined(QString,DCPMessage*)),
+                this, SLOT(groupJoined(QString,DCPMessage*)));
+        connect(processor, SIGNAL(groupLeft(QString,DCPMessage*)),
+                this, SLOT(groupLeft(QString,DCPMessage*)));
+
+        connect(processor, SIGNAL(groupMessageReceived(QString,DCPMessage*)),
+                this, SLOT(groupReceived(QString,DCPMessage*)));
+        connect(processor, SIGNAL(privateMessageReceived(QString,DCPMessage*)),
+                this, SLOT(privateReceived(QString,DCPMessage*)));
+    }
+}
+
+
+
 
 /**** Actions ****/
+
+void MainWindow::startRegistering()
+{
+    if(wizard != NULL) return;
+
+    wizard = new RegistrationWizard(this);
+    connect(wizard, SIGNAL(finished(int)), this, SLOT(finishRegistering(int)));
+    wizard->show();
+}
+
+void MainWindow::finishRegistering(int result)
+{
+    if(result == QDialog::Accepted)
+    {
+        QString server = wizard->field("serverName").toString();
+
+        if(server.length() == 0)
+            server = "elizabethmyers.me.uk";
+
+        maybeCreateConn();
+        conn->registerAndConnect(server, wizard->field("handle").toString(),
+                                 wizard->field("passphrase").toString(),
+                                 wizard->clientName(),
+                                 wizard->field("gecos").toString());
+    }
+
+    wizard->deleteLater();
+    wizard = NULL;
+}
 
 /** netConnect - connect to a network */
 void MainWindow::netConnect()
@@ -46,36 +112,7 @@ void MainWindow::netConnect()
     ConnectDialog dialog;
     if(dialog.exec() == QDialog::Accepted)
     {
-        if(conn == NULL)
-        {
-            conn = new DCPConnection;
-
-            connect(conn, SIGNAL(networkConnected()),
-                    this, SLOT(connected()));
-            connect(conn, SIGNAL(messageReceived(DCPMessage*)),
-                    this, SLOT(received(DCPMessage*)));
-            connect(conn, SIGNAL(errorReceived(QAbstractSocket::SocketError)),
-                    this, SLOT(sockError(QAbstractSocket::SocketError)));
-
-            processor = new DCPCommandProcessor(conn, this);
-
-            connect(conn, SIGNAL(messageReceived(DCPMessage*)),
-                    processor, SLOT(rawMessageReceived(DCPMessage*)));
-
-            connect(processor, SIGNAL(pingReceived(DCPMessage*)),
-                    processor, SLOT(defaultPingReceived(DCPMessage*)));
-
-            connect(processor, SIGNAL(groupJoined(QString,DCPMessage*)),
-                    this, SLOT(groupJoined(QString,DCPMessage*)));
-            connect(processor, SIGNAL(groupLeft(QString,DCPMessage*)),
-                    this, SLOT(groupLeft(QString,DCPMessage*)));
-
-            connect(processor, SIGNAL(groupMessageReceived(QString,DCPMessage*)),
-                    this, SLOT(groupReceived(QString,DCPMessage*)));
-            connect(processor, SIGNAL(privateMessageReceived(QString,DCPMessage*)),
-                    this, SLOT(privateReceived(QString,DCPMessage*)));
-        }
-
+        maybeCreateConn();
         conn->connectTo(dialog.server(), dialog.handle(), dialog.passphrase(),
                         dialog.client());
     }
@@ -390,6 +427,10 @@ void MainWindow::about()
 /** initActions - initialise the actions */
 void MainWindow::initActions()
 {
+    registerAct = new QAction(tr("&Register..."), this);
+    registerAct->setStatusTip(tr("Register with DCP."));
+    connect(registerAct, SIGNAL(triggered()), this, SLOT(startRegistering()));
+
     connectAct = new QAction(tr("&Connect..."), this);
     connectAct->setStatusTip(tr("Connect to a network."));
     connect(connectAct, SIGNAL(triggered()), this, SLOT(netConnect()));
@@ -436,6 +477,8 @@ void MainWindow::initActions()
 void MainWindow::initMenus()
 {
     connectionMenu = menuBar()->addMenu(tr("&Connection"));
+    connectionMenu->addAction(registerAct);
+    connectionMenu->addSeparator();
     connectionMenu->addAction(connectAct);
     connectionMenu->addAction(disconnectAct);
     connectionMenu->addSeparator();

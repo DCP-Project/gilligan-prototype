@@ -22,7 +22,8 @@ SOURCES += main.cxx\
     utility.cxx \
     connectdialog.cxx \
     dcpcommandprocessor.cxx \
-    conversationwidget.cxx
+    conversationwidget.cxx \
+    registrationwizard.cxx
 
 HEADERS  += mainwindow.h \
     dcpconnection.h \
@@ -30,4 +31,6 @@ HEADERS  += mainwindow.h \
     utility.h \
     connectdialog.h \
     dcpcommandprocessor.h \
-    conversationwidget.h
+    conversationwidget.h \
+    registrationwizard.h \
+    registrationwizard_private.h
