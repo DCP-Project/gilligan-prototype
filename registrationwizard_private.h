@@ -27,6 +27,7 @@ class RegAccountPage : public QWizardPage
     Q_OBJECT
 public:
     explicit RegAccountPage(QWidget *parent = 0);
+    void cleanupPage();
 
 signals:
 
@@ -57,6 +58,7 @@ class RegFinishPage : public QWizardPage
     Q_OBJECT
 public:
     explicit RegFinishPage(QWidget *parent = 0);
+    void initializePage();
 
 signals:
 

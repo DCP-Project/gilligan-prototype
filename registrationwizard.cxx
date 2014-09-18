@@ -67,6 +67,11 @@ RegAccountPage::RegAccountPage(QWidget *parent) :
     setLayout(layout);
 }
 
+void RegAccountPage::cleanupPage()
+{
+    passphrase->setText("");
+}
+
 RegPersonalPage::RegPersonalPage(QWidget *parent) :
     QWizardPage(parent)
 {
@@ -99,13 +104,17 @@ RegFinishPage::RegFinishPage(QWidget *parent) :
 
     info = new QTextEdit;
     info->setReadOnly(true);
-    info->setHtml("<h3>Account Information</h3><hr><br><dl><dt>Handle:</dt><dd>"
-                  + field("handle").toString() + "</dd></dl>" +
-                  "<h3>Personal Information</h3><hr><br><dl><dt>Name:</dt><dd>"
-                  + field("gecos").toString() + "</dd></dl>");
 
     QFormLayout *layout = new QFormLayout;
     layout->addWidget(info);
 
     setLayout(layout);
+}
+
+void RegFinishPage::initializePage()
+{
+    info->setHtml("<h3>Account Information</h3><dl><dt>Handle:</dt><dd>"
+                  + field("handle").toString() + "</dd></dl>" + "<hr>" +
+                  "<h3>Personal Information</h3><dl><dt>Name:</dt><dd>"
+                  + field("gecos").toString() + "</dd></dl>");
 }
