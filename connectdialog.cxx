@@ -8,15 +8,19 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 {
     connectButton = new QPushButton(tr("&Connect"));
     connectButton->setDefault(true);
+#ifdef HAVE_KDE
     connect(connectButton, SIGNAL(clicked()), this, SLOT(maybeSave()));
+#endif
 
     explanation = new QLabel(tr("Enter your credentials and Gilligan will attempt to connect you to DCP."));
 
+#ifdef HAVE_KDE
     creds = new QComboBox;
     creds->setEditable(false);
     creds->setEnabled(false);
     creds->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     connect(creds, SIGNAL(currentIndexChanged(int)), this, SLOT(savedCredentialSelected(int)));
+#endif
 
     serverEdit = new QLineEdit;
     handleEdit = new QLineEdit;
@@ -25,17 +29,23 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     clientEdit = new QLineEdit;
     clientEdit->setPlaceholderText(QHostInfo::localHostName());
 
+#ifdef HAVE_KDE
     saveCreds = new QCheckBox;
     saveCreds->setText(tr("Save credentials for later"));
     saveCreds->setEnabled(false);
+#endif
 
     QFormLayout *formLayout = new QFormLayout;
+#ifdef HAVE_KDE
     formLayout->addRow(tr("Sa&ved credentials:"), creds);
+#endif
     formLayout->addRow(tr("&Server:"), serverEdit);
     formLayout->addRow(tr("&Handle:"), handleEdit);
     formLayout->addRow(tr("&Passphrase:"), passphraseEdit);
     formLayout->addRow(tr("&Client:"), clientEdit);
+#ifdef HAVE_KDE
     formLayout->addWidget(saveCreds);
+#endif
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(connectButton, QDialogButtonBox::AcceptRole);
@@ -49,11 +59,14 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
     layout->addWidget(buttonBox);
     setLayout(layout);
 
+#ifdef HAVE_KDE
     wallet = Wallet::openWallet(Wallet::NetworkWallet(), winId(),
                                 Wallet::Asynchronous);
     connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpened(bool)));
+#endif
 }
 
+#ifdef HAVE_KDE
 static QString folder = QString("DCP Credentials");
 
 void ConnectDialog::walletOpened(bool success)
@@ -109,6 +122,7 @@ void ConnectDialog::savedCredentialSelected(int index)
     handleEdit->setText(parts[1]);
     passphraseEdit->setText(QString(pass.constData()));
 }
+#endif
 
 QString ConnectDialog::server()
 {
