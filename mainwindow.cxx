@@ -1,8 +1,12 @@
 #include "mainwindow.h"
 
-#include <KApplication>
-#include <KAboutApplicationDialog>
-#include <KCmdLineArgs>
+#ifdef HAVE_KDE
+#   include <KApplication>
+#   include <KAboutApplicationDialog>
+#   include <KCmdLineArgs>
+#else
+#   include <QApplication>
+#endif
 #include <QtGui>
 #include <QDesktopServices> // open URL
 #include <QUrl> // actual URL to open
@@ -418,8 +422,10 @@ void MainWindow::showSpec()
 /** about - show information about us */
 void MainWindow::about()
 {
+#ifdef HAVE_KDE
     KAboutApplicationDialog ad(KCmdLineArgs::aboutData());
     ad.exec();
+#endif
 }
 
 
@@ -443,7 +449,11 @@ void MainWindow::initActions()
     quitAct = new QAction(tr("&Quit Gilligan"), this);
     quitAct->setShortcuts(QKeySequence::Quit);
     quitAct->setStatusTip(tr("Close Gilligan."));
+#ifdef HAVE_KDE
     connect(quitAct, SIGNAL(triggered()), kapp, SLOT(quit()));
+#else
+    connect(quitAct, SIGNAL(triggered()), this, SLOT(close()));
+#endif
 
     joinAct = new QAction(tr("&Join Group..."), this);
     joinAct->setStatusTip(tr("Join a group."));

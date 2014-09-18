@@ -1,9 +1,16 @@
 #include "mainwindow.h"
-#include <KApplication>
-#include <KAboutData>
-#include <KCmdLineArgs>
+
+#ifdef HAVE_KDE
+#   include <KApplication>
+#   include <KAboutData>
+#   include <KCmdLineArgs>
+#else
+#   include <QApplication>
+#endif
+
 #include <QTextCodec>
 
+#ifdef HAVE_KDE
 static KAboutData about(
         "Gilligan",
         NULL,
@@ -15,9 +22,11 @@ static KAboutData about(
         KLocalizedString(),
         "http://dcp.foxkit.us/",
         "not yet available");
+#endif
 
 int main(int argc, char *argv[])
 {
+#ifdef HAVE_KDE
     about.addAuthor(ki18n("Andrew Wilcox"), ki18n("Developer"),
                     "awilcox@wilcox-tech.com", "http://foxkit.us/");
     about.addAuthor(ki18n("Elizabeth Myers"), ki18n("Protocol Development"),
@@ -25,6 +34,9 @@ int main(int argc, char *argv[])
 
     KCmdLineArgs::init(argc, argv, &about);
     KApplication app;
+#else
+    QApplication app(argc, argv);
+#endif
 
     // All DCP strings are UTF-8, per spec.
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
