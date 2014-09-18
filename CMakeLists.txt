@@ -2,7 +2,7 @@ project( gilligan )
 cmake_minimum_required( VERSION 2.8 )
 
 find_package( Qt4 REQUIRED )
-set( QT_USE_QTWEBKIT True )
+set( QT_USE_QTNETWORK True )
 
 set( gilligan_srcs
 	connectdialog.cxx conversationwidget.cxx mainwindow.cxx
@@ -24,7 +24,8 @@ set( gillian_moc_headers
 	dcpcommandprocessor.h dcpconnection.h dcpmessage.h
 	)
 
-include(${QT_USE_FILE})
+include( ${QT_USE_FILE} )
+add_definitions( ${QT_DEFINITIONS} )
 qt4_wrap_cpp( gilligan_moc_srcs ${gilligan_moc_headers} )
 
 find_package( KDE4 )
