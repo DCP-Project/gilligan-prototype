@@ -35,8 +35,7 @@ if( KDE4_FOUND )
 	kde4_add_executable( gilligan ${gilligan_srcs} ${gilligan_moc_srcs} )
 	target_link_libraries( gilligan ${QT_LIBRARIES} ${KDE4_KDEUI_LIBS} )
 else( KDE4_FOUND )
-	add_executable( gilligan MACOSX_BUNDLE ${gilligan_srcs}
-		${gilligan_moc_srcs} )
+	add_executable( gilligan ${gilligan_srcs} ${gilligan_moc_srcs} )
 	target_link_libraries( gilligan ${QT_LIBRAIES} )
 endif( KDE4_FOUND )
 
