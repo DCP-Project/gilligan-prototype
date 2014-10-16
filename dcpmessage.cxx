@@ -1,6 +1,10 @@
 #include "dcpmessage.h"
 
-#include <netinet/in.h> // ntohs
+#if defined(WIN32)
+#	include <winsock.h>
+#else
+#	include <netinet/in.h> // ntohs
+#endif
 #include <QtDebug>
 
 DCPMessage::DCPMessage(QString src, QString dst, QString cmd,

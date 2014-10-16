@@ -1,7 +1,11 @@
 #include "dcpconnection.h"
 
 #include <stdio.h> // fprintf, stderr
-#include <netinet/in.h> // htons
+#if defined(WIN32)
+#	include <winsock.h>
+#else
+#	include <netinet/in.h> // htons
+#endif
 
 #define BUF_MAX_SIZE 65536
 
