@@ -10,6 +10,8 @@ RegistrationWizard::RegistrationWizard(QWidget *parent) :
     setPage(Page_Account, new RegAccountPage);
     setPage(Page_Personal, new RegPersonalPage);
     setPage(Page_Finish, new RegFinishPage);
+
+    setWindowTitle(tr("New DCP Account Wizard"));
 }
 
 QString RegistrationWizard::clientName()
