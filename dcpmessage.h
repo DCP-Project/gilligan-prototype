@@ -14,8 +14,6 @@ public:
 
     quint16 toBytes(char **bytes, quint16 max);
 
-private:
-    quint16 length;
 public:
     const QString source;
     const QString dest;
