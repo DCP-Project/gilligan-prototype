@@ -4,7 +4,7 @@
 This is a client for the Domain Chat Protocol (DCP).
 
 The spec is actively being developed, as is this client, Gilligan, and the
-server, [Minnow](https://github.com/InterlinkedIRC/minnow-prototype).
+server, [Minnow](https://code.foxkit.us/IRC/minnow-prototype).
 
 ## Requirements
 * A C++ compiler.  clang is recommended, but MSVC should probably work.
