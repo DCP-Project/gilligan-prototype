@@ -20,8 +20,7 @@ DCPMessage *DCPMessage::fromBytes(char *bytes, quint16 byte_len)
     char *next;
     DCPMessage *msg;
 
-    len = ntohs(*(unsigned short *)bytes);
-    if(len > 1400 || len != byte_len)
+    if(*(unsigned short *)(bytes + (byte_len - 2)) != 0)
     {
         return NULL;    // Bad.
     }
@@ -71,9 +70,6 @@ quint16 DCPMessage::toBytes(char **bytes, quint16 max)
     char *buffer = *bytes;
     int next = 0;
 
-    buffer += 2;
-    *buffer++ = '\0';
-
     next = this->source.length();
     IF_TOO_BIG_GO_AWAY;
     memcpy(buffer, this->source.toUtf8().constData(), next);
@@ -116,7 +112,5 @@ quint16 DCPMessage::toBytes(char **bytes, quint16 max)
     *buffer++ = '\0';
 
     quint16 len = buffer - *bytes;
-    *(unsigned short *)*bytes = ntohs(len);
-
     return len;
 }
