@@ -288,7 +288,7 @@ void MainWindow::join()
                                           tr("Enter the name of the group to join."));
     DCPMessage *join = new DCPMessage("*",
                                       group,
-                                      "group-enter",
+                                      "join",
                                       QMultiHash<QString,QString>());
     processor->sendMessage(join);
     delete join;

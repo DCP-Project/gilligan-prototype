@@ -37,7 +37,7 @@ void DCPCommandProcessor::rawMessageReceived(DCPMessage *message)
     {
         emit pingReceived(message);
     }
-    else if(message->command.toLower() == "group-enter")
+    else if(message->command.toLower() == "join")
     {
         if(message->source == connection->handle())
         {
@@ -48,8 +48,8 @@ void DCPCommandProcessor::rawMessageReceived(DCPMessage *message)
             emit groupMessageReceived(message->dest, message);
         }
     }
-    else if(message->command.toLower() == "group-info" ||
-            message->command.toLower() == "group-names")
+    else if(message->command.toLower() == "metadata" ||
+	    message->command.toLower() == "members")
     {
         emit groupMessageReceived(message->source, message);
     }

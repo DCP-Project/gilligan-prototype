@@ -62,22 +62,20 @@ void ConversationWidget::append(QString html)
 
 void ConversationWidget::messageReceived(DCPMessage *message)
 {
-    if(message->command == "message")
+    if(message->command == "message" ||
+       message->command == "group-info" ||
+       message->command == "join")
     {
         this->append(prettyMessage(message));
     }
-    else if(message->command == "group-names")
+    else if(message->command == "members")
     {
-        QListIterator<QString> iterator(message->params.values("users"));
+        QListIterator<QString> iterator(message->params.values("member"));
         iterator.toBack();
         while(iterator.hasPrevious())
         {
             nameList->addItem(iterator.previous());
         }
-    }
-    else if(message->command == "group-info")
-    {
-        this->append(prettyMessage(message));
     }
     else
     {

@@ -93,7 +93,7 @@ QString prettyMessage(DCPMessage *message)
         repr += "</div><br>\n";
         return repr;
     }
-    else if(message->command == "group-info")
+    else if(message->command == "metadata")
     {
         QString topic = message->params.value("topic");
         if(topic.length() == 0)
@@ -105,6 +105,19 @@ QString prettyMessage(DCPMessage *message)
             return "<div class=\"topic\">Topic for this group: " +
                     topic + "</div><hr/><br>\n";
         }
+    }
+    else if(message->command == "join")
+    {
+        QString repr = "<div class=\"message\">";
+
+        repr += "→ <span class=\"sender\">";
+        repr += message->source;
+        repr += "</span> has joined <span class=\"group\">";
+        repr += message->dest;
+        repr += "</span>";
+
+        repr += "</div><br>\n";
+        return repr;
     }
     else
     {

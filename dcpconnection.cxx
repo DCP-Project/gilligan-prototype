@@ -74,7 +74,7 @@ void DCPConnection::registerAndConnect(QString server, QString handle,
 
     this->myHandle = handle;
 
-    sock->connectToHostEncrypted(server, 7266);
+    sock->connectToHostEncrypted(server, 3694);
 }
 
 const QString DCPConnection::handle()
